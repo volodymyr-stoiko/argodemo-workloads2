@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: awsdemo
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: awsdemo
+          containers:
+          - name: awsdemo
+            image: corest/awscli
+            args:
+            - /bin/sh
+            - -c
+            - "aws s3 ls"
+            env:
+            - name: AWS_ROLE_ARN
+              value: arn:aws:iam::739267361879:role/eksctl-tooling-cluster-addon-iamserviceaccou-Role1-18GKT0F53GS0Z
+            - name: AWS_WEB_IDENTITY_TOKEN_FILE
+              value: /var/run/secrets/eks.amazonaws.com/serviceaccount/token
+            volumeMounts:
+            - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+              name: aws-iam-token
+              readOnly: true
+          volumes:
+          - name: aws-iam-token
+            projected:
+              defaultMode: 420
+              sources:
+              - serviceAccountToken:
+                  audience: sts.amazonaws.com
+                  expirationSeconds: 86400
+                  path: token
