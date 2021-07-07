@@ -1,0 +1,12 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: awsdemo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole # should be reference to namespace role which allows patching pods
+  name: admin
+subjects:
+- kind: ServiceAccount
+  name: awsdemo
+  namespace: default

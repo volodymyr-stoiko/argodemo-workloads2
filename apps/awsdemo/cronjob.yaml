@@ -1,4 +1,4 @@
-apiVersion: batch/v1
+apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
   name: awsdemo
@@ -25,6 +25,7 @@ spec:
             - mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
               name: aws-iam-token
               readOnly: true
+          restartPolicy: OnFailure
           volumes:
           - name: aws-iam-token
             projected:
